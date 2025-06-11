@@ -1,6 +1,10 @@
+package task;
+
+import manager.Status;
+
 public class Subtask extends Task {
 
-    private final int epicId;
+    private int epicId;
 
     public Subtask(String taskName, String taskDescription, int taskId, Status status, int epicId) {
         super(taskName, taskDescription, taskId, status);
@@ -18,7 +22,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "task.Subtask{" +
                 "taskName='" + getTaskName() + '\'' +
                 ", taskDescription='" + getTaskDescription() + '\'' +
                 ", taskId=" + getTaskId() +

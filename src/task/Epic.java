@@ -1,8 +1,12 @@
+package task;
+
+import manager.Status;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
 
-    private ArrayList<Subtask> subtasks = new ArrayList<>();
+    private final ArrayList<Subtask> subtasks = new ArrayList<>();
 
     public Epic(String taskName, String taskDescription, int taskId, Status status) {
         super(taskName, taskDescription, taskId, status);
@@ -12,37 +16,20 @@ public class Epic extends Task {
         super(taskName, taskDescription);
     }
 
-    public void addSubtask(Subtask subtask) {
-        if (subtask != null) {
-            subtasks.add(subtask);
-        }
-    }
-
-    public void removeSubtask(Subtask subtask) {
-        if (subtask != null) {
-            subtasks.remove(subtask);
-        }
-    }
-
-    public void clearSubtasks() {
-        subtasks.clear();
-    }
-
     public ArrayList<Subtask> getSubtasks() {
         return subtasks;
     }
 
     public void setSubtasks(ArrayList<Subtask> subtasks) {
+        this.subtasks.clear();
         if (subtasks != null) {
-            this.subtasks = subtasks;
-        } else {
-            this.subtasks.clear();
+            this.subtasks.addAll(subtasks);
         }
     }
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "task.Epic{" +
                 "taskName='" + getTaskName() + '\'' +
                 ", taskDescription='" + getTaskDescription() + '\'' +
                 ", taskId=" + getTaskId() +

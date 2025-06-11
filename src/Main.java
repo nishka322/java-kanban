@@ -1,3 +1,9 @@
+import manager.Status;
+import manager.TaskManager;
+import task.Epic;
+import task.Subtask;
+import task.Task;
+
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -6,14 +12,14 @@ public class Main {
     public static void main(String[] args) {
         TaskManager manager = new TaskManager();
 
-        // Проверка сеттеров Task
+        // Проверка сеттеров task.Task
         Task task = new Task("OldName", "OldDesc");
         task.setTaskName("NewName");
         task.setTaskDescription("NewDesc");
         assertEquals("NewName", task.getTaskName());
         assertEquals("NewDesc", task.getTaskDescription());
 
-        // Добавление и обновление Task
+        // Добавление и обновление task.Task
         Task addedTask = manager.addTask(new Task("T1", "D1"));
         addedTask.setTaskName("T1-upd");
         addedTask.setTaskDescription("D1-upd");
@@ -28,19 +34,19 @@ public class Main {
         manager.deleteTask(delId);
         assertNull(manager.getTask(delId));
 
-        // Проверка конструктора Subtask с полными параметрами
+        // Проверка конструктора task.Subtask с полными параметрами
         Epic epicTmp = manager.addEpic(new Epic("Etmp", "DescEtmp"));
         Subtask fullSub = new Subtask("Sfull", "Dfull", 99, Status.NEW, epicTmp.getTaskId());
         assertEquals(99, fullSub.getTaskId());
         assertEquals("Sfull", fullSub.getTaskName());
         assertEquals(epicTmp.getTaskId(), fullSub.getEpicId());
 
-        // Проверка конструктора Epic с полными параметрами
+        // Проверка конструктора task.Epic с полными параметрами
         Epic fullEpic = new Epic("Efull", "DescEfull", 55, Status.NEW);
         assertEquals(55, fullEpic.getTaskId());
         assertEquals("Efull", fullEpic.getTaskName());
 
-        // Проверка setSubtasks в Epic
+        // Проверка setSubtasks в task.Epic
         ArrayList<Subtask> customList = new ArrayList<>();
         customList.add(fullSub);
         fullEpic.setSubtasks(customList);
