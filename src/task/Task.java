@@ -55,22 +55,16 @@ public class Task {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Task task)) return false;
-        return taskId == task.taskId &&
-               taskName.equals(task.taskName) &&
-               taskDescription.equals(task.taskDescription) &&
-               status == task.status;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Task task = (Task) obj;
+        return taskId == task.taskId;
     }
 
     @Override
     public int hashCode() {
-        int result = taskName.hashCode();
-        result = 31 * result + taskDescription.hashCode();
-        result = 31 * result + taskId;
-        result = 31 * result + status.hashCode();
-        return result;
+        return Integer.hashCode(taskId);
     }
 
     @Override

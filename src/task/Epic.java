@@ -23,7 +23,11 @@ public class Epic extends Task {
     public void setSubtasks(ArrayList<Subtask> subtasks) {
         this.subtasks.clear();
         if (subtasks != null) {
-            this.subtasks.addAll(subtasks);
+            for (Subtask sub : subtasks) {
+                if (sub.getTaskId() != this.getTaskId()) {
+                    this.subtasks.add(sub);
+                }
+            }
         }
     }
 
