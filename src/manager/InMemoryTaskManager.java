@@ -126,7 +126,8 @@ public class InMemoryTaskManager implements TaskManager {
             switch (s.getStatus()) {
                 case Status.NEW -> countNew++;
                 case Status.DONE -> countDone++;
-                default -> {}
+                default -> {
+                }
             }
         }
         if (countNew == list.size()) {
