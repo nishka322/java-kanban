@@ -6,8 +6,8 @@ import java.util.*;
 public class InMemoryHistoryManager implements HistoryManager {
     private static class DoublyLinkedList {
         private final Map<Integer, Node> nodeMap = new HashMap<>();
-        private final Node head;
-        private final Node tail;
+        private Node head;
+        private Node tail;
 
         public DoublyLinkedList() {
             head = new Node(null, null, null);
@@ -18,6 +18,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         private void linkLast(Task task) {
             Node existingNode = nodeMap.get(task.getTaskId());
+
             if (existingNode != null) {
                 removeNode(existingNode);
             }
