@@ -22,33 +22,43 @@ public class InMemoryHistoryManager implements HistoryManager {
         remove(task.getTaskId());
 
         Task taskCopy = copyTask(task);
-        Node newNode = new Node(taskCopy, tail.prev, tail);
-
-        tail.prev.next = newNode;
-        tail.prev = newNode;
-
+        Node newNode = linkLast(taskCopy);
         nodeMap.put(taskCopy.getTaskId(), newNode);
     }
 
     @Override
     public void remove(int id) {
         Node node = nodeMap.remove(id);
-
-        if (node == null) return;
-
-        node.prev.next = node.next;
-        node.next.prev = node.prev;
+        if (node != null) {
+            removeNode(node);
+        }
     }
 
     @Override
     public List<Task> getHistory() {
+        return Collections.unmodifiableList(getTasks());
+    }
+
+    private Node linkLast(Task task) {
+        Node newNode = new Node(task, tail.prev, tail);
+        tail.prev.next = newNode;
+        tail.prev = newNode;
+        return newNode;
+    }
+
+    private void removeNode(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private List<Task> getTasks() {
         List<Task> result = new ArrayList<>();
         Node current = head.next;
         while (current != tail) {
             result.add(copyTask(current.task));
             current = current.next;
         }
-        return Collections.unmodifiableList(result);
+        return result;
     }
 
     private Task copyTask(Task original) {
