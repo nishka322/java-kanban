@@ -126,7 +126,8 @@ public class InMemoryTaskManager implements TaskManager {
             switch (s.getStatus()) {
                 case Status.NEW -> countNew++;
                 case Status.DONE -> countDone++;
-                default -> {}
+                default -> {
+                }
             }
         }
         if (countNew == list.size()) {
@@ -212,6 +213,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int taskId) {
         tasks.remove(taskId);
+        historyManager.remove(taskId);
     }
 
     @Override
@@ -220,8 +222,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic != null) {
             for (Subtask sub : epic.getSubtasks()) {
                 subtasks.remove(sub.getTaskId());
+                historyManager.remove(sub.getTaskId());
             }
         }
+        historyManager.remove(epicId);
         epics.remove(epicId);
     }
 
@@ -235,6 +239,7 @@ public class InMemoryTaskManager implements TaskManager {
                 updateEpicStatus(epic);
             }
         }
+        historyManager.remove(subtaskId);
     }
 
     /* History */
