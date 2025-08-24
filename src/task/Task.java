@@ -1,5 +1,6 @@
 package task;
 
+import manager.FileBackedTaskManager;
 import manager.Status;
 
 public class Task {
@@ -20,6 +21,10 @@ public class Task {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.status = Status.NEW;
+    }
+
+    public void loadToManager(FileBackedTaskManager manager) {
+        manager.loadTask(this);
     }
 
     public String getTaskName() {

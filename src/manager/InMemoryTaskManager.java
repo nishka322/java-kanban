@@ -22,6 +22,22 @@ public class InMemoryTaskManager implements TaskManager {
         return idCounter++;
     }
 
+    public void loadTask(Task task) {
+        tasks.put(task.getTaskId(), task);
+    }
+
+    public void loadEpic(Epic epic) {
+        epics.put(epic.getTaskId(), epic);
+    }
+
+    public void loadSubtask(Subtask subtask) {
+        subtasks.put(subtask.getTaskId(), subtask);
+    }
+
+    public void setIdCounter(int id) {
+        this.idCounter = id;
+    }
+
     /* Add section */
 
     @Override
