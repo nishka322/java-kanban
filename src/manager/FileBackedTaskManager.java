@@ -1,5 +1,6 @@
 package manager;
 
+import exception.ManagerSaveException;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
 
     public FileBackedTaskManager(File file) {
@@ -163,6 +164,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
+
         try {
             String content = Files.readString(file.toPath());
             String[] lines = content.split("\n");
@@ -179,13 +181,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
                 int id = task.getTaskId();
 
-                if (task instanceof Epic epic) {
-                    manager.loadEpic(epic);
-                } else if (task instanceof Subtask subtask) {
-                    manager.loadSubtask(subtask);
-                } else {
-                    manager.loadTask(task);
-                }
+                task.loadToManager(manager);
 
                 if (id > maxId) {
                     maxId = id;
@@ -208,6 +204,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка чтения файла", e);
         }
+
         return manager;
     }
 

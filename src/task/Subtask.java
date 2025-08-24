@@ -1,5 +1,6 @@
 package task;
 
+import manager.FileBackedTaskManager;
 import manager.Status;
 
 public class Subtask extends Task {
@@ -20,6 +21,10 @@ public class Subtask extends Task {
 
     public int getEpicId() {
         return epicId;
+    }
+
+    public void loadToManager(FileBackedTaskManager manager) {
+        manager.loadSubtask(this);
     }
 
     @Override

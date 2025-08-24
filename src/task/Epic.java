@@ -1,5 +1,6 @@
 package task;
 
+import manager.FileBackedTaskManager;
 import manager.Status;
 
 import java.util.ArrayList;
@@ -14,6 +15,10 @@ public class Epic extends Task {
 
     public Epic(String taskName, String taskDescription) {
         super(taskName, taskDescription);
+    }
+
+    public void loadToManager(FileBackedTaskManager manager) {
+        manager.loadEpic(this);
     }
 
     public ArrayList<Subtask> getSubtasks() {

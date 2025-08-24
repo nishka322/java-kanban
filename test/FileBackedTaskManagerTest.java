@@ -16,18 +16,18 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest {
     private File tempFile;
     private FileBackedTaskManager manager;
 
     @BeforeEach
-    void setUp() throws IOException {
+    public void setUp() throws IOException {
         tempFile = File.createTempFile("test", ".csv");
         manager = new FileBackedTaskManager(tempFile);
     }
 
     @AfterEach
-    void tearDown() {
+    public void tearDown() {
         if (tempFile.exists()) {
             tempFile.delete();
         }
@@ -35,7 +35,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Сохранение и загрузка пустого менеджера")
-    void testSaveAndLoadEmptyManager() {
+    public void testSaveAndLoadEmptyManager() {
         manager.save();
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
@@ -47,7 +47,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Сохранение и загрузка нескольких задач разных типов")
-    void testSaveAndLoadMultipleTasks() {
+    public void testSaveAndLoadMultipleTasks() {
         Task task = new Task("Test Task", "Task description");
         Epic epic = new Epic("Test Epic", "Epic description");
 
@@ -88,7 +88,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Сохранение и загрузка после обновления задач")
-    void testSaveAndLoadAfterUpdate() {
+    public void testSaveAndLoadAfterUpdate() {
         Task task = new Task("Original Task", "Original description");
         manager.addTask(task);
 
@@ -105,7 +105,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Сохранение и загрузка после удаления задач")
-    void testSaveAndLoadAfterDelete() {
+    public void testSaveAndLoadAfterDelete() {
         Task task1 = new Task("Task 1", "Description 1");
         Task task2 = new Task("Task 2", "Description 2");
         manager.addTask(task1);
@@ -121,7 +121,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Сохранение и загрузка эпика с несколькими подзадачами")
-    void testSaveAndLoadEpicWithMultipleSubtasks() {
+    public void testSaveAndLoadEpicWithMultipleSubtasks() {
         Epic epic = new Epic("Test Epic", "Epic description");
         manager.addEpic(epic);
 
@@ -144,7 +144,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Проверка формата CSV файла")
-    void testCsvFileFormat() throws IOException {
+    public void testCsvFileFormat() throws IOException {
         Task task = new Task("Test Task", "Test Description");
         manager.addTask(task);
 
@@ -164,7 +164,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Совместимость с InMemoryTaskManager")
-    void testCompatibilityWithInMemoryManager() {
+    public void testCompatibilityWithInMemoryManager() {
         InMemoryTaskManager memoryManager = new InMemoryTaskManager();
 
         Task task1 = new Task("Task 1", "Description 1");
@@ -183,7 +183,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Восстановление счетчика идентификаторов")
-    void testIdCounterRestoration() {
+    public void testIdCounterRestoration() {
         Task task1 = new Task("Task 1", "Description 1");
         Task task2 = new Task("Task 2", "Description 2");
         Task task3 = new Task("Task 3", "Description 3");
