@@ -55,8 +55,8 @@ public class Main {
         // Вторая часть кода
         TaskManager taskManager = Managers.getDefault();
 
-        Task task1_2 = new Task("Задача 1", "Описание задачи 1");
-        taskManager.addTask(task1_2);
+        Task task12 = new Task("Задача 1", "Описание задачи 1");
+        taskManager.addTask(task12);
 
         Task task2 = new Task("Задача 2", "Описание задачи 2");
         taskManager.addTask(task2);
@@ -64,12 +64,12 @@ public class Main {
         Epic epicWithSubtasks = new Epic("Эпик с подзадачами", "Описание эпика с подзадачами");
         taskManager.addEpic(epicWithSubtasks);
 
-        Subtask subtask1_2 = new Subtask("Подзадача 1", "Описание подзадачи 1", epicWithSubtasks.getTaskId());
-        Subtask subtask2_2 = new Subtask("Подзадача 2", "Описание подзадачи 2", epicWithSubtasks.getTaskId());
+        Subtask subtask12 = new Subtask("Подзадача 1", "Описание подзадачи 1", epicWithSubtasks.getTaskId());
+        Subtask subtask22 = new Subtask("Подзадача 2", "Описание подзадачи 2", epicWithSubtasks.getTaskId());
         Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", epicWithSubtasks.getTaskId());
 
-        taskManager.addSubtask(subtask1_2);
-        taskManager.addSubtask(subtask2_2);
+        taskManager.addSubtask(subtask12);
+        taskManager.addSubtask(subtask22);
         taskManager.addSubtask(subtask3);
 
         Epic epicWithoutSubtasks = new Epic("Эпик без подзадач", "Описание эпика без подзадач");
@@ -80,7 +80,7 @@ public class Main {
         System.out.println();
 
         System.out.println("Запрашиваем задачу 1...");
-        taskManager.getTask(task1_2.getTaskId());
+        taskManager.getTask(task12.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем задачу 2...");
@@ -92,15 +92,15 @@ public class Main {
         printHistory(taskManager);
 
         System.out.println("Запрашиваем подзадачу 1...");
-        taskManager.getSubtask(subtask1_2.getTaskId());
+        taskManager.getSubtask(subtask12.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Повторно запрашиваем задачу 1...");
-        taskManager.getTask(task1_2.getTaskId());
+        taskManager.getTask(task12.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем подзадачу 2...");
-        taskManager.getSubtask(subtask2_2.getTaskId());
+        taskManager.getSubtask(subtask22.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем эпик без подзадач...");
