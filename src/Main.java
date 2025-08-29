@@ -4,14 +4,59 @@ import task.Epic;
 import task.Subtask;
 import task.Task;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import static manager.FileBackedTaskManager.loadFromFile;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
+        File file = File.createTempFile("tasks", ".csv");
+
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+
+        Task task1 = new Task("Задача 1", "Описание Задачи 1");
+        manager.addTask(task1);
+
+        Epic epic1 = new Epic("Эпик 1", "Описание Эпика 1");
+        manager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание Подзадачи 1", epic1.getTaskId());
+        manager.addSubtask(subtask1);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание Подзадачи 2", epic1.getTaskId());
+        manager.addSubtask(subtask2);
+
+        System.out.println("Задачи в первом менеджере:");
+        System.out.println("Задач: " + manager.getTasks().size());
+        System.out.println("Эпиков: " + manager.getEpics().size());
+        System.out.println("Подзадач: " + manager.getSubtasks().size());
+
+        FileBackedTaskManager loadedManager = loadFromFile(file);
+
+        List<Task> loadedTasks = loadedManager.getTasks();
+        List<Epic> loadedEpics = loadedManager.getEpics();
+        List<Subtask> loadedSubtasks = loadedManager.getSubtasks();
+
+        System.out.println("\nЗадачи в загруженном менеджере:");
+        System.out.println("Задач: " + loadedTasks.size());
+        System.out.println("Эпиков: " + loadedEpics.size());
+        System.out.println("Подзадач: " + loadedSubtasks.size());
+
+        System.out.println("\nСравнение задач:");
+        if (manager.getTasks().equals(loadedTasks) &&
+                manager.getEpics().equals(loadedEpics) &&
+                manager.getSubtasks().equals(loadedSubtasks)) {
+            System.out.println("Все задачи, эпики и подзадачи были успешно загружены.");
+        } else {
+            System.out.println("Ошибка: задачи не совпадают.");
+        }
+
+        // Вторая часть кода
         TaskManager taskManager = Managers.getDefault();
 
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
-        taskManager.addTask(task1);
+        Task task12 = new Task("Задача 1", "Описание задачи 1");
+        taskManager.addTask(task12);
 
         Task task2 = new Task("Задача 2", "Описание задачи 2");
         taskManager.addTask(task2);
@@ -19,12 +64,12 @@ public class Main {
         Epic epicWithSubtasks = new Epic("Эпик с подзадачами", "Описание эпика с подзадачами");
         taskManager.addEpic(epicWithSubtasks);
 
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", epicWithSubtasks.getTaskId());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", epicWithSubtasks.getTaskId());
+        Subtask subtask12 = new Subtask("Подзадача 1", "Описание подзадачи 1", epicWithSubtasks.getTaskId());
+        Subtask subtask22 = new Subtask("Подзадача 2", "Описание подзадачи 2", epicWithSubtasks.getTaskId());
         Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", epicWithSubtasks.getTaskId());
 
-        taskManager.addSubtask(subtask1);
-        taskManager.addSubtask(subtask2);
+        taskManager.addSubtask(subtask12);
+        taskManager.addSubtask(subtask22);
         taskManager.addSubtask(subtask3);
 
         Epic epicWithoutSubtasks = new Epic("Эпик без подзадач", "Описание эпика без подзадач");
@@ -35,7 +80,7 @@ public class Main {
         System.out.println();
 
         System.out.println("Запрашиваем задачу 1...");
-        taskManager.getTask(task1.getTaskId());
+        taskManager.getTask(task12.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем задачу 2...");
@@ -47,15 +92,15 @@ public class Main {
         printHistory(taskManager);
 
         System.out.println("Запрашиваем подзадачу 1...");
-        taskManager.getSubtask(subtask1.getTaskId());
+        taskManager.getSubtask(subtask12.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Повторно запрашиваем задачу 1...");
-        taskManager.getTask(task1.getTaskId());
+        taskManager.getTask(task12.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем подзадачу 2...");
-        taskManager.getSubtask(subtask2.getTaskId());
+        taskManager.getSubtask(subtask22.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем эпик без подзадач...");

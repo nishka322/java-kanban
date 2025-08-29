@@ -6,20 +6,20 @@ import task.Task;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-class InMemoryHistoryManagerTest {
+public class InMemoryHistoryManagerTest {
 
     @Test
-    void addSingleTask() {
+    public void addSingleTask() {
         HistoryManager manager = new InMemoryHistoryManager();
         Task task = new Task("Test", "Description", 1, Status.NEW);
         manager.add(task);
         List<Task> history = manager.getHistory();
         assertEquals(1, history.size(), "История должна содержать 1 задачу");
-        assertEquals(task, history.get(0), "Задачи должны совпадать");
+        assertEquals(task, history.getFirst(), "Задачи должны совпадать");
     }
 
     @Test
-    void addMultipleTasks() {
+    public void addMultipleTasks() {
         HistoryManager manager = new InMemoryHistoryManager();
         Task task1 = new Task("Task1", "Desc1", 1, Status.NEW);
         Task task2 = new Task("Task2", "Desc2", 2, Status.IN_PROGRESS);
@@ -32,47 +32,47 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void duplicateTaskMovedToEnd() {
+    public void duplicateTaskMovedToEnd() {
         HistoryManager manager = new InMemoryHistoryManager();
         Task task = new Task("Task", "Desc", 1, Status.NEW);
         manager.add(task);
         manager.add(new Task("Updated", "Desc", 1, Status.DONE));
         List<Task> history = manager.getHistory();
         assertEquals(1, history.size(), "История должна содержать 1 задачу после обновления");
-        assertEquals("Updated", history.get(0).getTaskName(), "Имя задачи должно обновиться");
-        assertEquals(Status.DONE, history.get(0).getStatus(), "Статус должен обновиться");
+        assertEquals("Updated", history.getFirst().getTaskName(), "Имя задачи должно обновиться");
+        assertEquals(Status.DONE, history.getFirst().getStatus(), "Статус должен обновиться");
     }
 
     @Test
-    void removeFromBeginning() {
+    public void removeFromBeginning() {
         HistoryManager manager = createHistoryWithTasks(1, 2, 3);
         manager.remove(1);
         assertHistoryOrder(manager, List.of(2, 3));
     }
 
     @Test
-    void removeFromMiddle() {
+    public void removeFromMiddle() {
         HistoryManager manager = createHistoryWithTasks(1, 2, 3);
         manager.remove(2);
         assertHistoryOrder(manager, List.of(1, 3));
     }
 
     @Test
-    void removeFromEnd() {
+    public void removeFromEnd() {
         HistoryManager manager = createHistoryWithTasks(1, 2, 3);
         manager.remove(3);
         assertHistoryOrder(manager, List.of(1, 2));
     }
 
     @Test
-    void removeNonExistentTask() {
+    public void removeNonExistentTask() {
         HistoryManager manager = createHistoryWithTasks(1, 2);
         manager.remove(99);
         assertHistoryOrder(manager, List.of(1, 2));
     }
 
     @Test
-    void taskCopyIsIndependent() {
+    public void taskCopyIsIndependent() {
         HistoryManager manager = new InMemoryHistoryManager();
         Task original = new Task("Original", "Desc", 1, Status.NEW);
         manager.add(original);
@@ -80,13 +80,13 @@ class InMemoryHistoryManagerTest {
         original.setTaskName("Modified");
         original.setStatus(Status.DONE);
 
-        Task fromHistory = manager.getHistory().get(0);
+        Task fromHistory = manager.getHistory().getFirst();
         assertEquals("Original", fromHistory.getTaskName(), "Имя не должно измениться");
         assertEquals(Status.NEW, fromHistory.getStatus(), "Статус не должен измениться");
     }
 
     @Test
-    void emptyHistoryWhenNoTasks() {
+    public void emptyHistoryWhenNoTasks() {
         HistoryManager manager = new InMemoryHistoryManager();
         assertTrue(manager.getHistory().isEmpty(), "История должна быть пустой");
     }
