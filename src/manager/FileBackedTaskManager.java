@@ -207,45 +207,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         return manager;
     }
-
-    public static void main(String[] args) throws IOException {
-        File file = File.createTempFile("tasks", ".csv");
-
-        FileBackedTaskManager manager = new FileBackedTaskManager(file);
-
-        Task task1 = new Task("Задача 1", "Описание Задачи 1");
-        manager.addTask(task1);
-
-        Epic epic1 = new Epic("Эпик 1", "Описание Эпика 1");
-        manager.addEpic(epic1);
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание Подзадачи 1", epic1.getTaskId());
-        manager.addSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание Подзадачи 2", epic1.getTaskId());
-        manager.addSubtask(subtask2);
-
-        System.out.println("Задачи в первом менеджере:");
-        System.out.println("Задач: " + manager.getTasks().size());
-        System.out.println("Эпиков: " + manager.getEpics().size());
-        System.out.println("Подзадач: " + manager.getSubtasks().size());
-
-        FileBackedTaskManager loadedManager = loadFromFile(file);
-
-        List<Task> loadedTasks = loadedManager.getTasks();
-        List<Epic> loadedEpics = loadedManager.getEpics();
-        List<Subtask> loadedSubtasks = loadedManager.getSubtasks();
-
-        System.out.println("\nЗадачи в загруженном менеджере:");
-        System.out.println("Задач: " + loadedTasks.size());
-        System.out.println("Эпиков: " + loadedEpics.size());
-        System.out.println("Подзадач: " + loadedSubtasks.size());
-
-        System.out.println("\nСравнение задач:");
-        if (manager.getTasks().equals(loadedTasks) &&
-                manager.getEpics().equals(loadedEpics) &&
-                manager.getSubtasks().equals(loadedSubtasks)) {
-            System.out.println("Все задачи, эпики и подзадачи были успешно загружены.");
-        } else {
-            System.out.println("Ошибка: задачи не совпадают.");
-        }
-    }
 }

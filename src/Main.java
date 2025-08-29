@@ -4,14 +4,19 @@ import task.Epic;
 import task.Subtask;
 import task.Task;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
+        FileBackedTaskManager.main(new String[0]);
+
+        // Вторая часть кода
         TaskManager taskManager = Managers.getDefault();
 
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
-        taskManager.addTask(task1);
+        Task task1_2 = new Task("Задача 1", "Описание задачи 1");
+        taskManager.addTask(task1_2);
 
         Task task2 = new Task("Задача 2", "Описание задачи 2");
         taskManager.addTask(task2);
@@ -19,12 +24,12 @@ public class Main {
         Epic epicWithSubtasks = new Epic("Эпик с подзадачами", "Описание эпика с подзадачами");
         taskManager.addEpic(epicWithSubtasks);
 
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", epicWithSubtasks.getTaskId());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", epicWithSubtasks.getTaskId());
+        Subtask subtask1_2 = new Subtask("Подзадача 1", "Описание подзадачи 1", epicWithSubtasks.getTaskId());
+        Subtask subtask2_2 = new Subtask("Подзадача 2", "Описание подзадачи 2", epicWithSubtasks.getTaskId());
         Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", epicWithSubtasks.getTaskId());
 
-        taskManager.addSubtask(subtask1);
-        taskManager.addSubtask(subtask2);
+        taskManager.addSubtask(subtask1_2);
+        taskManager.addSubtask(subtask2_2);
         taskManager.addSubtask(subtask3);
 
         Epic epicWithoutSubtasks = new Epic("Эпик без подзадач", "Описание эпика без подзадач");
@@ -35,7 +40,7 @@ public class Main {
         System.out.println();
 
         System.out.println("Запрашиваем задачу 1...");
-        taskManager.getTask(task1.getTaskId());
+        taskManager.getTask(task1_2.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем задачу 2...");
@@ -47,15 +52,15 @@ public class Main {
         printHistory(taskManager);
 
         System.out.println("Запрашиваем подзадачу 1...");
-        taskManager.getSubtask(subtask1.getTaskId());
+        taskManager.getSubtask(subtask1_2.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Повторно запрашиваем задачу 1...");
-        taskManager.getTask(task1.getTaskId());
+        taskManager.getTask(task1_2.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем подзадачу 2...");
-        taskManager.getSubtask(subtask2.getTaskId());
+        taskManager.getSubtask(subtask2_2.getTaskId());
         printHistory(taskManager);
 
         System.out.println("Запрашиваем эпик без подзадач...");
