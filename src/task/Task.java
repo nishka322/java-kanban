@@ -89,8 +89,8 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        long SECONDS_IN_MINUTE = 60L;
-        return startTime.plusSeconds(duration * SECONDS_IN_MINUTE);
+        long seconds = 60L;
+        return startTime.plusSeconds(duration * seconds);
     }
 
     @Override
