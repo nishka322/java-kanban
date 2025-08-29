@@ -52,7 +52,6 @@ public class Main {
             System.out.println("Ошибка: задачи не совпадают.");
         }
 
-        // Вторая часть кода
         TaskManager taskManager = Managers.getDefault();
 
         Task task12 = new Task("Задача 1", "Описание задачи 1");
