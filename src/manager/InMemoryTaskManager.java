@@ -129,6 +129,10 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalArgumentException("Подзадача пересекается по времени с существующей задачей");
         }
 
+        if (!epics.containsKey(subtask.getEpicId())) {
+            throw new IllegalArgumentException("Эпик с ID " + subtask.getEpicId() + " не существует");
+        }
+
         int newId = generateId();
         subtask.setTaskId(newId);
         subtasks.put(newId, subtask);
@@ -199,6 +203,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask == null || !subtasks.containsKey(subtask.getTaskId())) {
             return null;
         }
+
+        if (!epics.containsKey(subtask.getEpicId())) {
+            throw new IllegalArgumentException("Эпик с ID " + subtask.getEpicId() + " не существует");
+        }
+
         int subtaskId = subtask.getTaskId();
         Subtask old = subtasks.get(subtaskId);
 

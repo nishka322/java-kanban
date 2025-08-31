@@ -261,4 +261,36 @@ public class InMemoryTaskManagerTest extends manager.TaskManagerTest<InMemoryTas
         assertEquals(1, manager.getPrioritizedTasks().size());
         assertEquals(2, manager.getTasks().size());
     }
+
+    // Для подзадач нужно дополнительно проверить наличие эпика
+    @Test
+    @DisplayName("Добавление подзадачи с несуществующим эпиком")
+    void testAddSubtaskWithNonExistentEpic() {
+        Subtask subtask = new Subtask("Test", "Description", 999);
+        assertThrows(IllegalArgumentException.class, () -> taskManager.addSubtask(subtask));
+    }
+
+    @Test
+    @DisplayName("Добавление подзадачи с нулевым ID эпика")
+    void testAddSubtaskWithZeroEpicId() {
+        Subtask subtask = new Subtask("Test", "Description", 0);
+        assertThrows(IllegalArgumentException.class, () -> taskManager.addSubtask(subtask));
+    }
+
+    @Test
+    @DisplayName("Добавление подзадачи с отрицательным ID эпика")
+    void testAddSubtaskWithNegativeEpicId() {
+        Subtask subtask = new Subtask("Test", "Description", -1);
+        assertThrows(IllegalArgumentException.class, () -> taskManager.addSubtask(subtask));
+    }
+
+    @Test
+    @DisplayName("Обновление подзадачи с несуществующим эпиком")
+    void testUpdateSubtaskWithNonExistentEpic() {
+        Epic epic = taskManager.addEpic(new Epic("Epic", "Description"));
+        Subtask subtask = taskManager.addSubtask(new Subtask("Original", "Description", epic.getTaskId()));
+
+        Subtask updated = new Subtask("Updated", "Description", subtask.getTaskId(), Status.DONE, 999);
+        assertThrows(IllegalArgumentException.class, () -> taskManager.updateSubtask(updated));
+    }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public class Epic extends Task {
 
     private final ArrayList<Subtask> subtasks = new ArrayList<>();
-    private transient LocalDateTime endTime;
+    private LocalDateTime endTime;
 
     public Epic(String taskName, String taskDescription, int taskId, Status status) {
         super(taskName, taskDescription, taskId, status);
@@ -33,46 +33,36 @@ public class Epic extends Task {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setEndTime() {
+        this.endTime = calculateEndTime();
     }
 
-    public void calculateTimes() {
+    public int calculateDuration() {
         if (subtasks.isEmpty()) {
-            setStartTime(null);
-            setDuration(0);
-            setEndTime(null);
-            return;
+            return 0;
+        }
+        return Math.toIntExact(subtasks.stream()
+                .mapToLong(Subtask::getDuration)
+                .sum());
+    }
+
+    public LocalDateTime calculateEndTime() {
+        if (subtasks.isEmpty()) {
+            return null;
         }
 
         List<Subtask> subtasksWithTime = subtasks.stream()
-                .filter(subtask -> subtask.getStartTime() != null)
+                .filter(subtask -> subtask.getStartTime() != null && subtask.getDuration() > 0)
                 .toList();
 
         if (subtasksWithTime.isEmpty()) {
-            setStartTime(null);
-            setDuration(0);
-            setEndTime(null);
-            return;
+            return null;
         }
 
-        LocalDateTime earliestStart = subtasksWithTime.stream()
-                .map(Subtask::getStartTime)
-                .min(LocalDateTime::compareTo)
-                .orElse(null);
-
-        LocalDateTime latestEnd = subtasksWithTime.stream()
-                .map(Subtask::getEndTime)
+        return subtasksWithTime.stream()
+                .map(subtask -> subtask.getStartTime().plusMinutes(subtask.getDuration()))
                 .max(LocalDateTime::compareTo)
                 .orElse(null);
-
-        long totalDuration = subtasksWithTime.stream()
-                .mapToLong(Subtask::getDuration)
-                .sum();
-
-        setStartTime(earliestStart);
-        setDuration(totalDuration);
-        setEndTime(latestEnd);
     }
 
     public ArrayList<Subtask> getSubtasks() {

@@ -11,7 +11,7 @@ public class Task {
     private String taskDescription;
     private int taskId;
     private Status status;
-    private transient LocalDateTime startTime;
+    private LocalDateTime startTime;
     private long duration;
 
     public Task(String taskName, String taskDescription, int taskId, Status status, LocalDateTime startTime, long duration) {

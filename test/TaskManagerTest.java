@@ -1,5 +1,6 @@
 package manager;
 
+import org.junit.jupiter.api.DisplayName;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -173,5 +174,243 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.clearEpics();
         assertTrue(taskManager.getEpics().isEmpty());
         assertTrue(taskManager.getSubtasks().isEmpty());
+    }
+
+    // Проверка методов с разными данными
+    @Test
+    void testGetTask() {
+        // a. Со стандартным поведением
+        Task task = taskManager.addTask(new Task("Test", "Description"));
+        Task retrieved = taskManager.getTask(task.getTaskId());
+        assertEquals(task, retrieved);
+
+        // b. С пустым списком задач
+        taskManager.clearTasks();
+        assertNull(taskManager.getTask(task.getTaskId()));
+
+        // c. С неверным идентификатором задачи
+        assertNull(taskManager.getTask(-1));
+        assertNull(taskManager.getTask(0));
+        assertNull(taskManager.getTask(999));
+    }
+
+    @Test
+    void testGetEpic() {
+        // a. Со стандартным поведением
+        Epic epic = taskManager.addEpic(new Epic("Test", "Description"));
+        Epic retrieved = taskManager.getEpic(epic.getTaskId());
+        assertEquals(epic, retrieved);
+
+        // b. С пустым списком задач
+        taskManager.clearEpics();
+        assertNull(taskManager.getEpic(epic.getTaskId()));
+
+        // c. С неверным идентификатором задачи
+        assertNull(taskManager.getEpic(-1));
+        assertNull(taskManager.getEpic(0));
+        assertNull(taskManager.getEpic(999));
+    }
+
+    @Test
+    void testGetSubtask() {
+        // a. Со стандартным поведением
+        Epic epic = taskManager.addEpic(new Epic("Test", "Description"));
+        Subtask subtask = taskManager.addSubtask(new Subtask("Test", "Description", epic.getTaskId()));
+        Subtask retrieved = taskManager.getSubtask(subtask.getTaskId());
+        assertEquals(subtask, retrieved);
+
+        // b. С пустым списком задач
+        taskManager.clearSubtasks();
+        assertNull(taskManager.getSubtask(subtask.getTaskId()));
+
+        // c. С неверным идентификатором задачи
+        assertNull(taskManager.getSubtask(-1));
+        assertNull(taskManager.getSubtask(0));
+        assertNull(taskManager.getSubtask(999));
+    }
+
+    @Test
+    void testUpdateTask() {
+        // a. Со стандартным поведением
+        Task task = taskManager.addTask(new Task("Original", "Desc"));
+        Task updated = new Task("Updated", "NewDesc", task.getTaskId(), Status.IN_PROGRESS);
+        Task result = taskManager.updateTask(updated);
+        assertEquals(updated, result);
+
+        // b. С пустым списком задач
+        taskManager.clearTasks();
+        assertNull(taskManager.updateTask(updated));
+
+        // c. С неверным идентификатором задачи
+        Task invalidTask = new Task("Invalid", "Desc", -1, Status.NEW);
+        assertNull(taskManager.updateTask(invalidTask));
+    }
+
+    @Test
+    void testUpdateEpic() {
+        // a. Со стандартным поведением
+        Epic epic = taskManager.addEpic(new Epic("Original", "Desc"));
+        Epic updated = new Epic("Updated", "NewDesc", epic.getTaskId(), Status.DONE);
+        Epic result = taskManager.updateEpic(updated);
+        assertEquals(updated, result);
+
+        // b. С пустым списком задач
+        taskManager.clearEpics();
+        assertNull(taskManager.updateEpic(updated));
+
+        // c. С неверным идентификатором задачи
+        Epic invalidEpic = new Epic("Invalid", "Desc", -1, Status.NEW);
+        assertNull(taskManager.updateEpic(invalidEpic));
+    }
+
+    @Test
+    void testUpdateSubtask() {
+        // a. Со стандартным поведением
+        Epic epic = taskManager.addEpic(new Epic("Epic", "Desc"));
+        Subtask subtask = taskManager.addSubtask(new Subtask("Original", "Desc", epic.getTaskId()));
+        Subtask updated = new Subtask("Updated", "NewDesc", subtask.getTaskId(), Status.DONE, epic.getTaskId());
+        Subtask result = taskManager.updateSubtask(updated);
+        assertEquals(updated, result);
+
+        // b. С пустым списком задач
+        taskManager.clearSubtasks();
+        assertNull(taskManager.updateSubtask(updated));
+
+        // c. С неверным идентификатором задачи
+        Subtask invalidSubtask = new Subtask("Invalid", "Desc", -1, Status.NEW, epic.getTaskId());
+        assertNull(taskManager.updateSubtask(invalidSubtask));
+    }
+
+    @Test
+    void testDeleteTask() {
+        // a. Со стандартным поведением
+        Task task = taskManager.addTask(new Task("Test", "Desc"));
+        taskManager.deleteTask(task.getTaskId());
+        assertNull(taskManager.getTask(task.getTaskId()));
+
+        // b. С пустым списком задач
+        taskManager.deleteTask(1); // Не должно быть исключения
+
+        // c. С неверным идентификатором задачи
+        taskManager.deleteTask(-1);
+        taskManager.deleteTask(0);
+        taskManager.deleteTask(999);
+    }
+
+    @Test
+    void testDeleteEpic() {
+        // a. Со стандартным поведением
+        Epic epic = taskManager.addEpic(new Epic("Test", "Desc"));
+        taskManager.deleteEpic(epic.getTaskId());
+        assertNull(taskManager.getEpic(epic.getTaskId()));
+
+        // b. С пустым списком задач
+        taskManager.deleteEpic(1); // Не должно быть исключения
+
+        // c. С неверным идентификатором задачи
+        taskManager.deleteEpic(-1);
+        taskManager.deleteEpic(0);
+        taskManager.deleteEpic(999);
+    }
+
+    @Test
+    void testDeleteSubtask() {
+        // a. Со стандартным поведением
+        Epic epic = taskManager.addEpic(new Epic("Epic", "Desc"));
+        Subtask subtask = taskManager.addSubtask(new Subtask("Test", "Desc", epic.getTaskId()));
+        taskManager.deleteSubtask(subtask.getTaskId());
+        assertNull(taskManager.getSubtask(subtask.getTaskId()));
+
+        // b. С пустым списком задач
+        taskManager.deleteSubtask(1); // Не должно быть исключения
+
+        // c. С неверным идентификатором задачи
+        taskManager.deleteSubtask(-1);
+        taskManager.deleteSubtask(0);
+        taskManager.deleteSubtask(999);
+    }
+
+    // Тесты для расчёта статуса
+    @Test
+    @DisplayName("a. Расчет статуса эпика - пустой список подзадач")
+    void testEpicStatusWithEmptySubtasks() {
+        Epic epic = taskManager.addEpic(new Epic("Test Epic", "Description"));
+        assertEquals(Status.NEW, epic.getStatus(), "Статус эпика без подзадач должен быть NEW");
+    }
+
+    @Test
+    @DisplayName("b. Расчет статуса эпика - все подзадачи со статусом NEW")
+    void testEpicStatusWithAllNewSubtasks() {
+        Epic epic = taskManager.addEpic(new Epic("Test Epic", "Description"));
+        Subtask subtask1 = taskManager.addSubtask(new Subtask("Subtask 1", "Desc", epic.getTaskId()));
+        Subtask subtask2 = taskManager.addSubtask(new Subtask("Subtask 2", "Desc", epic.getTaskId()));
+
+        assertEquals(Status.NEW, epic.getStatus(), "Статус эпика со всеми NEW подзадачами должен быть NEW");
+    }
+
+    @Test
+    @DisplayName("c. Расчет статуса эпика - все подзадачи со статусом DONE")
+    void testEpicStatusWithAllDoneSubtasks() {
+        Epic epic = taskManager.addEpic(new Epic("Test Epic", "Description"));
+        Subtask subtask1 = taskManager.addSubtask(new Subtask("Subtask 1", "Desc", epic.getTaskId()));
+        Subtask subtask2 = taskManager.addSubtask(new Subtask("Subtask 2", "Desc", epic.getTaskId()));
+
+        subtask1.setStatus(Status.DONE);
+        subtask2.setStatus(Status.DONE);
+        taskManager.updateSubtask(subtask1);
+        taskManager.updateSubtask(subtask2);
+
+        assertEquals(Status.DONE, epic.getStatus(), "Статус эпика со всеми DONE подзадачами должен быть DONE");
+    }
+
+    @Test
+    @DisplayName("d. Расчет статуса эпика - подзадачи со статусами NEW и DONE")
+    void testEpicStatusWithNewAndDoneSubtasks() {
+        Epic epic = taskManager.addEpic(new Epic("Test Epic", "Description"));
+        Subtask subtask1 = taskManager.addSubtask(new Subtask("Subtask 1", "Desc", epic.getTaskId()));
+        Subtask subtask2 = taskManager.addSubtask(new Subtask("Subtask 2", "Desc", epic.getTaskId()));
+
+        subtask1.setStatus(Status.NEW);
+        subtask2.setStatus(Status.DONE);
+        taskManager.updateSubtask(subtask1);
+        taskManager.updateSubtask(subtask2);
+
+        assertEquals(Status.IN_PROGRESS, epic.getStatus(),
+                "Статус эпика с подзадачами NEW и DONE должен быть IN_PROGRESS");
+    }
+
+    @Test
+    @DisplayName("e. Расчет статуса эпика - подзадачи со статусом IN_PROGRESS")
+    void testEpicStatusWithInProgressSubtasks() {
+        Epic epic = taskManager.addEpic(new Epic("Test Epic", "Description"));
+        Subtask subtask1 = taskManager.addSubtask(new Subtask("Subtask 1", "Desc", epic.getTaskId()));
+        Subtask subtask2 = taskManager.addSubtask(new Subtask("Subtask 2", "Desc", epic.getTaskId()));
+
+        subtask1.setStatus(Status.IN_PROGRESS);
+        subtask2.setStatus(Status.IN_PROGRESS);
+        taskManager.updateSubtask(subtask1);
+        taskManager.updateSubtask(subtask2);
+
+        assertEquals(Status.IN_PROGRESS, epic.getStatus(),
+                "Статус эпика с подзадачами IN_PROGRESS должен быть IN_PROGRESS");
+    }
+
+    @Test
+    @DisplayName("Расчет статуса эпика - смешанные статусы подзадач")
+    void testEpicStatusWithMixedSubtasks() {
+        Epic epic = taskManager.addEpic(new Epic("Test Epic", "Description"));
+        Subtask subtask1 = taskManager.addSubtask(new Subtask("Subtask 1", "Desc", epic.getTaskId()));
+        Subtask subtask2 = taskManager.addSubtask(new Subtask("Subtask 2", "Desc", epic.getTaskId()));
+        Subtask subtask3 = taskManager.addSubtask(new Subtask("Subtask 3", "Desc", epic.getTaskId()));
+
+        subtask1.setStatus(Status.NEW);
+        subtask2.setStatus(Status.IN_PROGRESS);
+        subtask3.setStatus(Status.DONE);
+        taskManager.updateSubtask(subtask1);
+        taskManager.updateSubtask(subtask2);
+        taskManager.updateSubtask(subtask3);
+
+        assertEquals(Status.IN_PROGRESS, epic.getStatus(),
+                "Статус эпика со смешанными статусами подзадач должен быть IN_PROGRESS");
     }
 }

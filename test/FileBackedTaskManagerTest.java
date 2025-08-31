@@ -243,4 +243,77 @@ public class FileBackedTaskManagerTest extends manager.TaskManagerTest<FileBacke
 
         emptyFile.delete();
     }
+
+    // Граничные условия
+    @Test
+    @DisplayName("a. Сохранение и восстановление пустого списка задач")
+    public void testSaveAndLoadEmptyTaskList() {
+        fileManager.save();
+
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
+
+        assertTrue(loadedManager.getTasks().isEmpty(), "Список задач должен быть пустым");
+        assertTrue(loadedManager.getEpics().isEmpty(), "Список эпиков должен быть пустым");
+        assertTrue(loadedManager.getSubtasks().isEmpty(), "Список подзадач должен быть пустым");
+    }
+
+    @Test
+    @DisplayName("b. Сохранение и восстановление эпика без подзадач")
+    public void testSaveAndLoadEpicWithoutSubtasks() {
+        Epic epic = new Epic("Test Epic", "Epic without subtasks");
+        fileManager.addEpic(epic);
+
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
+
+        List<Epic> loadedEpics = loadedManager.getEpics();
+        assertEquals(1, loadedEpics.size(), "Должен быть 1 эпик");
+
+        Epic loadedEpic = loadedEpics.getFirst();
+        assertEquals(epic.getTaskName(), loadedEpic.getTaskName());
+        assertEquals(epic.getTaskDescription(), loadedEpic.getTaskDescription());
+        assertTrue(loadedEpic.getSubtasks().isEmpty(), "У эпика не должно быть подзадач");
+        assertEquals(Status.NEW, loadedEpic.getStatus(), "Статус эпика без подзадач должен быть NEW");
+    }
+
+    @Test
+    @DisplayName("c. Сохранение и восстановление пустого списка истории")
+    public void testSaveAndLoadEmptyHistory() {
+        Task task = new Task("Test Task", "Task description");
+        fileManager.addTask(task);
+
+        fileManager.save();
+
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
+
+        assertTrue(loadedManager.getHistory().isEmpty(), "История должна быть пустой");
+        assertEquals(1, loadedManager.getTasks().size(), "Задача должна сохраниться");
+    }
+
+    // Тесты для HistoryManager по граничным условиям
+    @Test
+    @DisplayName("История задач - пустая история")
+    public void testEmptyHistory() {
+        assertTrue(fileManager.getHistory().isEmpty(), "История должна быть пустой при создании менеджера");
+
+        Task task = new Task("Test Task", "Task description");
+        fileManager.addTask(task);
+
+        assertTrue(fileManager.getHistory().isEmpty(), "История должна оставаться пустой без вызовов get методов");
+    }
+
+    @Test
+    @DisplayName("История задач - дублирование")
+    public void testHistoryDuplication() {
+        Task task = new Task("Test Task", "Task description");
+        fileManager.addTask(task);
+
+        fileManager.getTask(task.getTaskId());
+        fileManager.getTask(task.getTaskId());
+        fileManager.getTask(task.getTaskId());
+
+        List<Task> history = fileManager.getHistory();
+        assertEquals(1, history.size(), "История должна содержать только одну запись при дублировании");
+        assertEquals(task.getTaskId(), history.getFirst().getTaskId());
+    }
+
 }
