@@ -346,9 +346,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask(int taskId) {
-        tasks.remove(taskId);
-        prioritizedTasks.remove(tasks.get(taskId));
-        historyManager.remove(taskId);
+        Task removedTask = tasks.remove(taskId);
+        if (removedTask != null) {
+            prioritizedTasks.remove(removedTask);
+            historyManager.remove(taskId);
+        }
     }
 
     @Override
