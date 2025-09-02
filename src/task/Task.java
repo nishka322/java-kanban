@@ -3,12 +3,25 @@ package task;
 import manager.FileBackedTaskManager;
 import manager.Status;
 
+import java.time.LocalDateTime;
+
 public class Task {
 
     private String taskName;
     private String taskDescription;
     private int taskId;
     private Status status;
+    private LocalDateTime startTime;
+    private long duration;
+
+    public Task(String taskName, String taskDescription, int taskId, Status status, LocalDateTime startTime, long duration) {
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.taskId = taskId;
+        this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
 
     public Task(String taskName, String taskDescription, int taskId, Status status) {
         this.taskName = taskName;
@@ -57,6 +70,27 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public LocalDateTime  getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime  startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        long seconds = 60L;
+        return startTime.plusSeconds(duration * seconds);
     }
 
     @Override

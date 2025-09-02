@@ -66,7 +66,9 @@ public class InMemoryHistoryManager implements HistoryManager {
                 original.getTaskName(),
                 original.getTaskDescription(),
                 original.getTaskId(),
-                original.getStatus()
+                original.getStatus(),
+                original.getStartTime(),
+                original.getDuration()
         );
     }
 

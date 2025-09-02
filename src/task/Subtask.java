@@ -3,6 +3,8 @@ package task;
 import manager.FileBackedTaskManager;
 import manager.Status;
 
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
 
     private int epicId;
@@ -17,6 +19,13 @@ public class Subtask extends Task {
     public Subtask(String taskName, String taskDescription, int epicId) {
         super(taskName, taskDescription);
         this.epicId = epicId;
+    }
+
+    public Subtask(String taskName, String taskDescription, int taskId, Status status, int epicId, LocalDateTime startTime, long duration) {
+        super(taskName, taskDescription, taskId, status, startTime, duration);
+        if (taskId != epicId) {
+            this.epicId = epicId;
+        }
     }
 
     public int getEpicId() {
