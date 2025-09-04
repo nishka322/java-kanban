@@ -1,6 +1,7 @@
 package http.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
+import http.HttpMethod;
 import manager.TaskManager;
 import task.Task;
 
@@ -17,28 +18,33 @@ public class TaskHandler extends BaseHttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         try {
             String path = exchange.getRequestURI().getPath();
-            String method = exchange.getRequestMethod();
+            HttpMethod httpMethod;
 
-            switch (method) {
-                case "GET":
+            try {
+                httpMethod = HttpMethod.valueOf(exchange.getRequestMethod());
+            } catch (IllegalArgumentException e) {
+                sendNotFound(exchange);
+                return;
+            }
+
+            switch (httpMethod) {
+                case GET:
                     handleGetRequest(exchange, path, "/tasks/task/",
                             v -> taskManager.getTasks(),
                             taskManager::getTask);
                     break;
-                case "POST":
+                case POST:
                     handlePostRequest(exchange, Task.class,
                             taskManager::addTask,
                             taskManager::updateTask,
                             task -> task.getTaskId() == 0);
                     break;
-                case "DELETE":
+                case DELETE:
                     handleDeleteRequest(exchange, path, "/tasks/task/",
                             taskManager::clearTasks,
                             taskManager::getTask,
                             taskManager::deleteTask);
                     break;
-                default:
-                    sendNotFound(exchange);
             }
         } catch (Exception e) {
             sendInternalServerError(exchange);

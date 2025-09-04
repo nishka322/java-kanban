@@ -3,7 +3,7 @@ package http.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import task.Task;
-
+import http.HttpMethod;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,15 +18,22 @@ public class HistoryHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
-            if (!"GET".equals(exchange.getRequestMethod())) {
+            String path = exchange.getRequestURI().getPath();
+            HttpMethod httpMethod;
+
+            try {
+                httpMethod = HttpMethod.valueOf(exchange.getRequestMethod());
+            } catch (IllegalArgumentException e) {
                 sendNotFound(exchange);
                 return;
             }
 
-            String path = exchange.getRequestURI().getPath();
-
-            if (Pattern.matches("^/tasks/history/$", path)) {
-                handleGetHistory(exchange);
+            if (httpMethod == HttpMethod.GET) {
+                if (Pattern.matches("^/tasks/history/$", path)) {
+                    handleGetHistory(exchange);
+                } else {
+                    sendNotFound(exchange);
+                }
             } else {
                 sendNotFound(exchange);
             }

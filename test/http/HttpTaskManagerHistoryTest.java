@@ -9,6 +9,9 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +31,8 @@ class HttpTaskManagerHistoryTest extends HttpTaskServerTestBase {
                 .build();
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, response1.statusCode(), "Неверный статус код для первой задачи");
+        Task createdTask1 = gson.fromJson(response1.body(), Task.class);
+        int taskId1 = createdTask1.getTaskId();
 
         HttpRequest request2 = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks/task/"))
@@ -36,15 +41,20 @@ class HttpTaskManagerHistoryTest extends HttpTaskServerTestBase {
                 .build();
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, response2.statusCode(), "Неверный статус код для второй задачи");
+        Task createdTask2 = gson.fromJson(response2.body(), Task.class);
+        int taskId2 = createdTask2.getTaskId();
 
-        Thread.sleep(100);
+        HttpRequest getRequest1 = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/tasks/task/" + taskId1))
+                .GET()
+                .build();
+        client.send(getRequest1, HttpResponse.BodyHandlers.ofString());
 
-        Task[] tasks = getAllTasks();
-        int taskId1 = tasks[0].getTaskId();
-        int taskId2 = tasks[1].getTaskId();
-
-        getTaskById(taskId1);
-        getTaskById(taskId2);
+        HttpRequest getRequest2 = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/tasks/task/" + taskId2))
+                .GET()
+                .build();
+        client.send(getRequest2, HttpResponse.BodyHandlers.ofString());
 
         HttpRequest historyRequest = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks/history/"))
@@ -56,7 +66,13 @@ class HttpTaskManagerHistoryTest extends HttpTaskServerTestBase {
 
         Task[] history = gson.fromJson(historyResponse.body(), Task[].class);
         assertNotNull(history, "История не вернулась");
-        assertTrue(history.length >= 2, "В истории должно быть 2 задачи");
+        assertEquals(2, history.length, "В истории должно быть 2 задачи");
+
+        Set<Integer> historyIds = Arrays.stream(history)
+                .map(Task::getTaskId)
+                .collect(Collectors.toSet());
+        assertTrue(historyIds.contains(taskId1), "В истории должна быть первая задача");
+        assertTrue(historyIds.contains(taskId2), "В истории должна быть вторая задача");
     }
 
     @Test
@@ -72,31 +88,5 @@ class HttpTaskManagerHistoryTest extends HttpTaskServerTestBase {
         Task[] history = gson.fromJson(historyResponse.body(), Task[].class);
         assertNotNull(history, "История не вернулась");
         assertEquals(0, history.length, "История должна быть пустой");
-    }
-
-    private HttpResponse<String> createTask(String taskJson) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks/task/"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    private Task[] getAllTasks() throws IOException, InterruptedException {
-        HttpRequest getRequest = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks/task/"))
-                .GET()
-                .build();
-        HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
-        return gson.fromJson(response.body(), Task[].class);
-    }
-
-    private HttpResponse<String> getTaskById(int taskId) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks/task/" + taskId))
-                .GET()
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

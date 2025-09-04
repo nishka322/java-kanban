@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import task.Epic;
 import task.Subtask;
+import http.HttpMethod;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,15 +19,22 @@ public class SubtaskByEpicHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
-            if (!"GET".equals(exchange.getRequestMethod())) {
+            String path = exchange.getRequestURI().getPath();
+            HttpMethod httpMethod;
+
+            try {
+                httpMethod = HttpMethod.valueOf(exchange.getRequestMethod());
+            } catch (IllegalArgumentException e) {
                 sendNotFound(exchange);
                 return;
             }
 
-            String path = exchange.getRequestURI().getPath();
-
-            if (Pattern.matches("^/tasks/subtask/epic/\\d+$", path)) {
-                handleGetSubtasksByEpic(exchange, path);
+            if (httpMethod == HttpMethod.GET) {
+                if (Pattern.matches("^/tasks/subtask/epic/\\d+$", path)) {
+                    handleGetSubtasksByEpic(exchange, path);
+                } else {
+                    sendNotFound(exchange);
+                }
             } else {
                 sendNotFound(exchange);
             }

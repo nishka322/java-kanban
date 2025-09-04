@@ -1,7 +1,7 @@
 package http.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import http.HttpMethod;
 import manager.TaskManager;
 import task.Task;
 
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class TasksHandler extends BaseHttpHandler implements HttpHandler {
+public class TasksHandler extends BaseHttpHandler {
 
     public TasksHandler(TaskManager taskManager) {
         super(taskManager);
@@ -18,15 +18,22 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
-            if (!"GET".equals(exchange.getRequestMethod())) {
+            String path = exchange.getRequestURI().getPath();
+            HttpMethod httpMethod;
+
+            try {
+                httpMethod = HttpMethod.valueOf(exchange.getRequestMethod());
+            } catch (IllegalArgumentException e) {
                 sendNotFound(exchange);
                 return;
             }
 
-            String path = exchange.getRequestURI().getPath();
-
-            if (Pattern.matches("^/tasks/$", path)) {
-                handleGetPrioritizedTasks(exchange);
+            if (httpMethod == HttpMethod.GET) {
+                if (Pattern.matches("^/tasks/$", path)) {
+                    handleGetPrioritizedTasks(exchange);
+                } else {
+                    sendNotFound(exchange);
+                }
             } else {
                 sendNotFound(exchange);
             }

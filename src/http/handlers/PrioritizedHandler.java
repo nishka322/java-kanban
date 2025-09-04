@@ -1,15 +1,15 @@
 package http.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import manager.TaskManager;
 import task.Task;
+import http.HttpMethod;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
+public class PrioritizedHandler extends BaseHttpHandler {
 
     public PrioritizedHandler(TaskManager taskManager) {
         super(taskManager);
@@ -18,15 +18,22 @@ public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
-            if (!"GET".equals(exchange.getRequestMethod())) {
+            String path = exchange.getRequestURI().getPath();
+            HttpMethod httpMethod;
+
+            try {
+                httpMethod = HttpMethod.valueOf(exchange.getRequestMethod());
+            } catch (IllegalArgumentException e) {
                 sendNotFound(exchange);
                 return;
             }
 
-            String path = exchange.getRequestURI().getPath();
-
-            if (Pattern.matches("^/tasks/prioritized$", path)) {
-                handleGetPrioritizedTasks(exchange);
+            if (httpMethod == HttpMethod.GET) {
+                if (Pattern.matches("^/tasks/prioritized$", path)) {
+                    handleGetPrioritizedTasks(exchange);
+                } else {
+                    sendNotFound(exchange);
+                }
             } else {
                 sendNotFound(exchange);
             }
