@@ -1,6 +1,5 @@
-import manager.HistoryManager;
-import manager.InMemoryHistoryManager;
-import manager.Status;
+package manager;
+
 import org.junit.jupiter.api.Test;
 import task.Task;
 import java.util.List;
